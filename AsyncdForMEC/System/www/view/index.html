@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/index.css">
+    <title>扫码积分系统</title>
+</head>
+
+<body>
+	<div class="more-container">
+		<img class="more" src="img/more.png" alt="">
+	</div>
+	<!-- 退出登录下拉 -->
+	<div class="logout">
+		<div class="sanjiao"></div>
+		<div class="item" id="close">
+			<img src="img/icon1.png" alt="">
+			<span>关闭</span>
+		</div>
+		<div class="item" id="log-off">
+			<img src="img/icon2.png" alt="">
+			<span>注销</span>
+		</div>
+	</div>
+    <header class="header" id="header">
+        <span class="hm" id="shopName"></span>
+    </header>
+    <section class="bg-container hide">
+        <!-- 二维码生成中，稍后窗口 -->
+        <div class="content-wrapper active">
+            <div class="hm-title" id="codeTitle">积分二维码生成中，请稍后</div>
+            <div class="money" id="moneyTxt"></div>
+            <img class="bg-img" id="codeImg" src="img/default.png" alt="">
+        </div>
+    </section>
+	<div id="qrcode" style="display:none;width:1px;height:1px;overflow:hidden"></div>
+	<!-- 登录成功弹窗 -->
+    <div class="page-shade hide"></div>
+    <div id="msg" class="suc-pop hide"></div>
+	<!-- loading状态 -->
+    <div class="loading-wrapper hide">
+        <img src="img/loading.gif" alt="">
+        <p>请稍后...</p>
+    </div>
+
+    <script src="js/jquery-1.11.3.js"></script>
+    <script src="js/jquery.cookie.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/jquery.qrcode.min.js"></script>
+	<script src="js/common.js"></script>
+    <script>
+	//socket url
+	var socketUrl = 'ws://10.0.15.203:33001';
+	var socket;
+	var isConnected = false;	//是否连接
+    var isReConnected = false;		//软件是否关闭
+	var totalConnectNum = 99999;   //总重连次数
+	var currentConnectNum = 0;
+	var reInt;
+	var jumpInt;
+	var jumpCycle = 5000;	//心跳周期
+	var reConnectCycle = 3000;	//重连周期
+	var codeshowTime = 60000*10;	//一分钟
+	var showInt;
+
+	//获取token
+	var token =  $.cookie('auth_token');
+	var shopName =  $.cookie('shop_name');
+	if (typeof(token) == "undefined" || token == ""){
+		self.location='login.html';
+	}else{
+		$('#shopName').html(shopName);
+		$('.bg-container').removeClass('hide');
+		connectSocket();
+	}
+
+	//处理websocket
+	function webSocket(url){
+		if (typeof(url) == "undefined" || url==''){
+			console.log('socket地址不能为空');
+			return;
+		}
+		socket = new WebSocket(url);
+		socket.onopen = function(evt) {
+			loading(false);
+			console.log(evt);
+			currentConnectNum = 0;
+			isConnected = true;
+			isReConnected = false;
+			clearTimeout(reInt);
+			showMsg();
+			socket.send("{\"msg_type\":\"login\",\"token\":\"" + token + "\"}");
+			jumpInt = setInterval('jumpHeartThread()', jumpCycle);	//心跳检测
+        };
+        socket.onclose = function(evt) {
+			clearInterval(jumpInt);
+			isConnected = false;
+			console.log("reconnectSocket");
+			WriteLog('重连socket');
+			if(!isReConnected){
+				connectSocket();
+			}
+        };
+        socket.onmessage = function(evt) {
+			
+			receiveData(evt);
+        };
+        socket.onerror = function(evt) {
+			//判断连接次数
+			console.log("Connected fail");
+			currentConnectNum++;
+			if (currentConnectNum> totalConnectNum)
+			{
+				socket.close();
+				showMsg("服务器连接已失败! 请联系管理人员.",0);
+				WriteLog('服务器连接已失败! 请联系管理人员','e');
+			}else{
+				isReConnected = true;
+				isConnected = false;
+				reInt = setTimeout('connectSocket()',reConnectCycle);
+				showMsg("服务器连接失败, 正在重新连接("+ currentConnectNum + ")次",0);
+				WriteLog('服务器连接失败, 正在重新连接','e');
+			}
+        };
+	}
+	
+	//二维码转换图片
+	function codeToImages(codeStr){
+		$('#qrcode').html('').qrcode({
+		render:"canvas",
+		text: codeStr,
+		width:475,
+		height:475
+		});
+		var canvas = $("#qrcode").find("canvas").attr('id','codeCanvas');
+		var cc = document.getElementById('codeCanvas');
+		$('#codeImg').attr('src',cc.toDataURL("image/png"));
+	}
+	
+	//心跳检测
+	function jumpHeartThread(){
+		console.log("jumpHeart");
+		socket.send("{\"msg_type\":\"\"}");
+	}
+	
+	//处理数据
+	function receiveData(evt){
+		console.log("Received Message: " + evt.data);
+		if(typeof(evt.data) == 'undefined' || evt.data==''){
+			showMsg("数据异常",'e');
+			return;
+		}
+		var data = $.parseJSON(evt.data);
+			if(typeof(data["code"]) != "undefined"){
+				if (data["code"] == '200'){
+					switch (data["msg_type"])
+					{
+						//返回二维码url
+						case "code_url":
+							if (data["money"] != null && parseInt(data["money"])>0){
+								console.log("img link:" + data["url"]);
+								codeToImages(data["url"]);
+								$('#moneyTxt').html('￥' + data["money"]);
+								$('#codeTitle').html("微信扫码  自动积分");
+								clearTimeout(showInt);
+								showInt = setTimeout('hiddenCode()',codeshowTime);
+							}
+							else
+							{
+								$('#codeImg').attr('src','img/error.png');
+								$('#moneyTxt').html('');
+								$('#codeTitle').html("积分获取异常");
+							}
+							break;
+					}
+				}else if (data["code"] == '400'){
+					switch (data["msg_type"])
+					{
+						case "loginfail":
+							showMsg("店铺编号异常!");
+							WriteLog('店铺编号异常!','e');
+							break;
+						case "unbindlogin":
+							showMsg("店铺编号已在其它地方登陆! 请重试");
+							WriteLog('店铺编号已在其它地方登陆! 请重试','e');
+							break;
+					}
+					if (socket != null){
+						socket.close();
+					}
+					//退出登录
+					logOut();
+				}
+			}else{
+				console.log("Error: code is undefined");
+			}
+	}
+
+	function connectSocket(){
+		loading(true);
+		console.log("is Connected");
+		WriteLog('开始连接socket');
+		if (!isConnected)
+		{
+			webSocket(socketUrl);
+		}
+	}
+	
+	//隐藏二维码
+	function hiddenCode(){
+		clearTimeout(showInt);
+		$('#moneyTxt').html('');
+		$('#codeImg').attr('src','img/default.png');
+		$('#codeTitle').html("积分二维码生成中，请稍后");
+	}
+
+	function logOut(){
+		if(isConnected){
+			socket.close();
+		}
+		$.cookie('auth_token', '');
+		$.cookie('shop_name', '');
+		WriteLog('退出登录');
+		self.location = 'login.html';
+	}
+	$(function () {
+		var bIsAndroid = isAndroid();
+		if (bIsAndroid) {
+			$('#close').css('display', 'none');
+		}
+	})
+    </script>
+</body>
+</html>

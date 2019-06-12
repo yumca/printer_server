@@ -1,0 +1,58 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# processname:          print-server
+# chkconfig:		- 86 15
+# pidfile               /home/www/print/logs/swoole/server.pid 
+### END INIT INFO		
+
+php=/usr/local/php7.1.16/bin/php
+prog=print-server
+prefix=/home/www/htdocs/print
+exec_prefix=${prefix}
+
+server_BIN=${exec_prefix}/server.php
+server_PID=${prefix}/logs/swoole/server.pid
+lockfile=/var/lock/subsys/print-server
+
+case "$1" in
+	start)
+		echo -n "Starting $prog "
+		cd $prefix
+                $php server.php
+
+		if [ "$?" != 0 ] ; then
+			echo "failed"
+		else
+			echo "Starting success"
+		fi
+	;;
+
+	stop)
+		echo -n "Stopping $prog: "
+
+		if [ ! -r $server_PID ] ; then
+			echo "warning, no pid file found "
+			exit 1
+		fi
+
+		kill -15 `cat $server_PID`
+
+		if [ "$?" != 0 ] ; then
+			echo " failed"
+			exit 1
+		else
+			echo "Stopping success"
+		fi
+	;;
+
+	restart)
+		$0 stop
+		$0 start
+	;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart}"
+	;;
+
+esac

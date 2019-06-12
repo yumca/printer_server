@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>生成解析json格式</title>
+    <meta charset="UTF-8">
+    <style>
+        .pd1 {
+            margin-left:20px;
+        }
+        .pd2 {
+            margin-left:40px;
+        }
+        .pdt1 {
+            margin-top:30px;
+        }
+        .pdd1 {
+            margin-bottom:100px;
+        }
+        .lab1 {
+            display:inline-block;
+            width:70px;
+        }
+        .match1 {
+            width:300px;
+        }
+    </style>
+</head>
+<body>
+<div id="contents">
+    <div id="order_id">
+        <h3>订单号：</h3>
+        <div class="pd1">匹配起始字符：<input type="text" name="order_id_field" id="order_id_field" /></div>
+        <div class="pd1">
+            匹配行位移：
+            <div class="pd1">
+                <input type="radio" name="order_id_row_type" class="order_id_row_type" value="1" checked />固定行：第<input type="number" name="order_id_row_val1" id="order_id_row_val1" value="0" />行
+            </div>
+            <div class="pd1">
+                <input type="radio" name="order_id_row_type" class="order_id_row_type" value="2" />匹配至非空为止：从当前行之后第<input type="number" name="order_id_row_val2" id="order_id_row_val2" value="1" />行开始
+            </div>
+        </div>
+        <div class="pd1">
+            匹配类型：
+            <div class="pd1">
+                <input type="radio" name="order_id_match_type" class="order_id_match_type" value="1" checked />固定匹配:
+                <div class="pd2">匹配长度位移：<input type="number" name="order_id_offset" id="order_id_offset" value="0" /></div>
+                <div class="pd2">匹配长度：<input type="number" name="order_id_len" id="order_id_len" value="0" /></div>
+            </div>
+            <div class="pd1">
+                <input type="radio" name="order_id_match_type" class="order_id_match_type" value="2" />正则匹配:<input class="match1" type="text" name="order_id_match_val" id="order_id_match_val" value="" />
+            </div>
+        </div>
+    </div>
+
+    <div id="amount">
+        <h3>金额：</h3>
+        <div class="pd1">匹配起始字符：<input type="text" name="amount_field" id="amount_field" /></div>
+        <div class="pd1">
+            匹配行位移：
+            <div class="pd1">
+                <input type="radio" name="amount_row_type" class="amount_row_type" value="1" checked />固定行：第<input type="number" name="amount_row_val1" id="amount_row_val1" value="0" />行
+            </div>
+            <div class="pd1">
+                <input type="radio" name="amount_row_type" class="amount_row_type" value="2" />匹配至非空为止：从当前行之后第<input type="number" name="amount_row_val2" id="amount_row_val2" value="1" />行开始
+            </div>
+        </div>
+        <div class="pd1">
+            匹配类型：
+            <div class="pd1">
+                <input type="radio" name="amount_match_type" class="amount_match_type" value="1" checked />固定匹配:
+                <div class="pd2">匹配长度位移：<input type="number" name="amount_offset" id="amount_offset" value="0" /></div>
+                <div class="pd2">匹配长度：<input type="number" name="amount_len" id="amount_len" value="0" /></div>
+            </div>
+            <div class="pd1">
+                <input type="radio" name="amount_match_type" class="amount_match_type" value="2" />正则匹配:<input class="match1" type="text" name="amount_match_val" id="amount_match_val" value="" />
+            </div>
+        </div>
+    </div>
+
+    <div id="method">
+        <h3>付款方式：</h3>
+        <div class="pd1">匹配起始字符：<input type="text" name="method_field" id="method_field" /></div>
+        <div class="pd1">
+            匹配行位移：
+            <div class="pd1">
+                <input type="radio" name="method_row_type" class="method_row_type" value="1" checked />固定行：第<input type="number" name="method_row_val1" id="method_row_val1" value="0" />行
+            </div>
+            <div class="pd1">
+                <input type="radio" name="method_row_type" class="method_row_type" value="2" />匹配至非空为止：从当前行之后第<input type="number" name="method_row_val2" id="method_row_val2" value="1" />行开始
+            </div>
+        </div>
+        <div class="pd1">
+            匹配类型：
+            <div class="pd1">
+                <input type="radio" name="method_match_type" class="method_match_type" value="1" checked />固定匹配:
+                <div class="pd2">匹配长度位移：<input type="number" name="method_offset" id="method_offset" value="0" /></div>
+                <div class="pd2">匹配长度：<input type="number" name="method_len" id="method_len" value="0" /></div>
+            </div>
+            <div class="pd1">
+                <input type="radio" name="method_match_type" class="method_match_type" value="2" />正则匹配:<input class="match1" type="text" name="method_match_val" id="method_match_val" value="" />
+            </div>
+        </div>
+        <div class="pd1">付款类型匹配转换：
+            <div class="pd1"><label class="lab1">现金</label><input type="text" id="cash" value="" /></div>
+            <div class="pd1"><label class="lab1">支付宝</label><input type="text" id="alipay" value="" /></div>
+            <div class="pd1"><label class="lab1">微信</label><input type="text" id="wxpay" value="" /></div>
+            <div class="pd1"><label class="lab1">银行卡</label><input type="text" id="bank" value="" /></div>
+            <div class="pd1"><label class="lab1">平安付</label><input type="text" id="paf" value="" /></div>
+            <div class="pd1"><label class="lab1">点评</label><input type="text" id="dp" value="" /></div>
+        </div>
+    </div>
+
+    <div id="times">
+        <h3>日期：</h3>
+        <div class="pd1">匹配起始字符：<input type="text" name="times_field" id="times_field" /></div>
+        <div class="pd1">
+            匹配行位移：
+            <div class="pd1">
+                <input type="radio" name="times_row_type" class="times_row_type" value="1" checked />固定行：第<input type="number" name="times_row_val1" id="times_row_val1" value="0" />行
+            </div>
+            <div class="pd1">
+                <input type="radio" name="times_row_type" class="times_row_type" value="2" />匹配至非空为止：从当前行之后第<input type="number" name="times_row_val2" id="times_row_val2" value="1" />行开始
+            </div>
+        </div>
+        <div class="pd1">
+            匹配类型：
+            <div class="pd1">
+                <input type="radio" name="times_match_type" class="times_match_type" value="1" checked />固定匹配:
+                <div class="pd2">匹配长度位移：<input type="number" name="times_offset" id="times_offset" value="0" /></div>
+                <div class="pd2">匹配长度：<input type="number" name="times_len" id="times_len" value="0" /></div>
+            </div>
+            <div class="pd1">
+                <input type="radio" name="times_match_type" class="times_match_type" value="2" />正则匹配:<input class="match1" type="text" name="times_match_val" id="times_match_val" value="" />
+            </div>
+        </div>
+    </div>
+</div>
+<button class="pd1 pdt1" id="parse">生成</button>
+<div class="pd1 pdt1 pdd1" id="code_json"></div>
+<script type="text/javascript">
+    var code_json={},order_id={},amount={},method={},times={};
+    document.getElementById('parse').onclick = function(){
+        var i;
+        //订单号
+        order_id.field = document.getElementById('order_id_field').value;
+        var order_id_row_type = document.getElementsByName('order_id_row_type');
+        for(i=0;i<order_id_row_type.length;i++){
+            if(order_id_row_type[i].checked == true){
+                order_id.row_type = order_id_row_type[i].value;
+                order_id.row_val = document.getElementById('order_id_row_val'+order_id.row_type).value;
+            }
+        }
+        order_id_match_type = document.getElementsByName('order_id_match_type');
+        for(i=0;i<order_id_match_type.length;i++){
+            if(order_id_match_type[i].checked == true){
+                order_id.match_type = order_id_match_type[i].value;
+            }
+        }
+        order_id.match_val = document.getElementById('order_id_match_val').value;
+        order_id.offset = document.getElementById('order_id_offset').value;
+        order_id.len = document.getElementById('order_id_len').value;
+        
+        
+        //金额
+        amount.field = document.getElementById('amount_field').value;
+        var amount_row_type = document.getElementsByName('amount_row_type');
+        for(i=0;i<amount_row_type.length;i++){
+            if(amount_row_type[i].checked == true){
+                amount.row_type = amount_row_type[i].value;
+                amount.row_val = document.getElementById('amount_row_val'+amount.row_type).value;
+            }
+        }
+        amount_match_type = document.getElementsByName('amount_match_type');
+        for(i=0;i<amount_match_type.length;i++){
+            if(amount_match_type[i].checked == true){
+                amount.match_type = amount_match_type[i].value;
+            }
+        }
+        amount.match_val = document.getElementById('amount_match_val').value;
+        amount.offset = document.getElementById('amount_offset').value;
+        amount.len = document.getElementById('amount_len').value;
+        
+        
+        //付款方式
+        method.field = document.getElementById('method_field').value;
+        var method_row_type = document.getElementsByName('method_row_type');
+        for(i=0;i<method_row_type.length;i++){
+            if(method_row_type[i].checked == true){
+                method.row_type = method_row_type[i].value;
+                method.row_val = document.getElementById('method_row_val'+method.row_type).value;
+            }
+        }
+        method_match_type = document.getElementsByName('method_match_type');
+        for(i=0;i<method_match_type.length;i++){
+            if(method_match_type[i].checked == true){
+                method.match_type = method_match_type[i].value;
+            }
+        }
+        method.match_val = document.getElementById('method_match_val').value;
+        method.offset = document.getElementById('method_offset').value;
+        method.len = document.getElementById('method_len').value;
+        method.paytype = {};
+        method.paytype.cash = document.getElementById('cash').value;
+        method.paytype.alipay = document.getElementById('alipay').value;
+        method.paytype.wxpay = document.getElementById('wxpay').value;
+        method.paytype.bank = document.getElementById('bank').value;
+        method.paytype.paf = document.getElementById('paf').value;
+        method.paytype.dp = document.getElementById('dp').value;
+        
+        //日期
+        times.field = document.getElementById('times_field').value;
+        var times_row_type = document.getElementsByName('times_row_type');
+        
+        for(i=0;i<times_row_type.length;i++){
+            if(times_row_type[i].checked == true){
+                times.row_type = times_row_type[i].value;
+                times.row_val = document.getElementById('times_row_val'+times.row_type).value;
+            }
+        }
+        times_match_type = document.getElementsByName('times_match_type');
+        for(i=0;i<times_match_type.length;i++){
+            if(times_match_type[i].checked == true){
+                times.match_type = times_match_type[i].value;
+            }
+        }
+        times.match_val = document.getElementById('times_match_val').value;
+        times.offset = document.getElementById('times_offset').value;
+        times.len = document.getElementById('times_len').value;
+        
+        code_json.order_id = order_id;
+        code_json.amount = amount;
+        code_json.method = method;
+        code_json.times = times;
+        console.log(code_json);
+        document.getElementById('code_json').innerHTML = JSON.stringify(code_json);
+    }
+</script>
+</body>
+</html>
+
+
+
+
+

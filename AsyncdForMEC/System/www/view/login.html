@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/index.css">
+    <title>扫码积分系统</title>
+</head>
+<body>
+	<div class="more-container">
+		<img class="more" src="img/more.png" alt="">
+	</div>
+	<!-- 退出登录下拉 -->
+	<div class="logout">
+		<div class="sanjiao"></div>
+		<div class="item" id="close">
+			<img src="img/icon1.png" alt="">
+			<span>关闭</span>
+		</div>
+	</div>
+    <header class="header" id="header">
+        <img class="logo" src="img/logo.png" alt="">
+    </header>
+    <section class="bg-container">
+        <div class="content-wrapper">
+            <div class="title">摩尔城扫码自动积分系统</div>
+            <div class="shop-code">
+                <label id="label" for="code">店铺编码：</label>
+                <input type="text" class="form-control" onclick='OnKeyPanel();' placeholder="请输入店铺编码" id="code">
+            </div>
+            <button class="button" id="sub_btn">确定</button>
+        </div>
+    </section>
+    <!-- 登录成功弹窗 -->
+    <div class="page-shade hide"></div>
+    <div id="msg" class="suc-pop hide"></div>
+
+	<!-- loading状态 -->
+    <div class="loading-wrapper hide">
+        <img src="img/loading.gif" alt="">
+        <p>请稍后...</p>
+    </div>
+
+<script src="js/jquery-1.11.3.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/common.js"></script>
+<script>
+var HttpUrl = 'http://10.0.15.203:33001';
+
+// 点击提交
+$('#sub_btn').click(function () {
+	var code = $('#code').val();
+	if (code == '') {
+		showMsg("店铺编码不能为空");
+		return;
+	}
+	$.ajax({
+		url: HttpUrl + '/login.php',
+		type: 'POST', //GET
+		async: true,    //或false,是否异步
+		data: {
+			msgtype: 'login', meccode: code
+		},
+		timeout: 5000,    //超时时间
+		dataType: 'json',    //返回的数据格式：json/xml/html/script/jsonp/text
+		beforeSend: function (xhr) { },
+		success: function (data, textStatus, jqXHR) {
+			if (data.code == 200) {
+				$.cookie('auth_token', data.token);
+				$.cookie('shop_name', data.shop_name);
+				self.location = 'index.html';
+			} else {
+				showMsg(data.msg);
+			}
+			console.log(data);
+		},
+		error: function (xhr, textStatus) {
+			showMsg("服务错误");
+			WriteLog('登录失败！服务器错误','e');
+			return;
+		}
+	})
+});
+
+$(function() {
+	var bIsAndroid = isAndroid();
+	if(bIsAndroid) {
+		$('.more-container').css('display','none');
+	}
+})
+</script>
+</body>
+</html>

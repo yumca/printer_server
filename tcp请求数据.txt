@@ -1,0 +1,46 @@
+服务器:测试线
+ip： 10.0.15.203
+
+
+模拟提交打印数据脚本
+/home/www/htdocs/print/imgtest.php
+
+模拟客户端脚本
+/home/www/htdocs/print/client.php
+
+http服务控制脚本
+/home/www/htdocs/print/printhttp
+
+tcp服务控制脚本
+/home/www/htdocs/print/printd
+
+
+http请求端口： 33001
+区分大小写
+
+登录
+请类型  POST
+地址  /login.php
+{'meccode':''}
+目前测试meccode：L12
+返回
+{'code':200,'msg':'登录成功','token':'','shop_name':''}
+
+
+ws请求端口： 33001
+区分大小写
+
+请求绑定链接格式
+{'msg_type':'login','token':''}
+
+下发绑定失败格式
+{'code':400,'msg_type':'loginfail'}
+
+下发二维码数据格式
+{'code':200,'msg_type':'code_url','url':''}
+
+下发登录解绑格式
+{'code':400,'msg_type':'unbindlogin'}
+
+
+
