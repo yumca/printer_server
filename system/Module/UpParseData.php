@@ -11,12 +11,12 @@ if (!defined('PATH')) {
 
 require_once PATH . '/System/Base/Base.php';
 
-class upParseData extends Base {
+class UpParseData extends Base {
 
     protected $redisKeyQueue = 'print_queue';
     protected $redisValQueue = 'print_queue_data';
     protected $tableTime = 'table_time';
-    public $logModule = 'upParseData';
+    public $logModule = 'UpParseData';
     public $logPid; //log处理进程ID
     public $redis,$DbPdo;
 
