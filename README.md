@@ -1,2 +1,2 @@
-# printer_server
-用php-swoole搭建的通过网络接收和解析电脑发送的打印机打印内容
+# AsyncdForMEC
+简单的phpfrok服务框架
