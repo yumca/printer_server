@@ -12,10 +12,10 @@ ini_set('memory_limit', '256M');
 set_time_limit(0);
 
 define('DEBUG', true); //DB调试
-if(!defined('PATH')){
+if (!defined('PATH')) {
     define('PATH', dirname(dirname(dirname(__FILE__))));
 }
-if(!defined('SPATH')){
+if (!defined('SPATH')) {
     define('SPATH', '/System');
 }
 include_once(PATH . SPATH . '/Common/function.php');
@@ -24,12 +24,14 @@ include_once(PATH . SPATH . '/Library/MyLogs.php');
 include_once(PATH . SPATH . '/Library/DbPdo.php');
 include_once(PATH . SPATH . '/Library/Queue.php');
 
-class Base {
+class Base
+{
 
     public $logs;
     public $conf;
 
-    public function __construct() {
+    public function __construct()
+    {
 
         //读取配置文件
         $configPath = PATH . SPATH . '/Conf/config.php';
@@ -45,19 +47,22 @@ class Base {
         }
     }
 
-    protected function _return($code = '500', $data = null) {
+    protected function _return($code = '500', $data = null)
+    {
         header('Content-Type: application/json; charset=utf-8');
         $data = array('code' => $code, 'message' => $data);
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
         exit;
     }
 
-    protected function _redirect($url) {
+    protected function _redirect($url)
+    {
         header("Location:" . $url);
         exit;
     }
 
-    public function myLogs($msg = '', $type = '', $mode = 'demo', $data = '') {
+    public function myLogs($msg = '', $type = '', $mode = 'demo', $data = '')
+    {
         $this->logs = new MyLogs($mode);
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
         $this->logs->doLog($msg, $data, $type, current($trace));
@@ -65,7 +70,8 @@ class Base {
 
     //链接数据库
     //mall_main,mall_thirdpart,userinfo,mall_coupon
-    protected function connect_mysql($dbconnect = null, $db_idx = null) {
+    protected function connect_mysql($dbconnect = null, $db_idx = null)
+    {
         if ($dbconnect !== null) {
             if (in_array($dbconnect, array('db_local'))) {
                 //单库
@@ -129,7 +135,8 @@ class Base {
     }
 
     // 推送至抓取数据队列#陈志军修改后版本
-    public function sendDataToQueue($name, $data, $flags = '') {
+    public function sendDataToQueue($name, $data, $flags = '')
+    {
         //初始化队列推送类
         $send = new Queue($this->conf['MQ_CONN_ARGS']);
         // 设置队列名称
@@ -143,5 +150,4 @@ class Base {
             return false;
         }
     }
-
 }
