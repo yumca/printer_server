@@ -3,7 +3,7 @@
 return array(
     'dev' => array(
         //测试线
-        'db_local' => array(
+        'db' => array(
             'DB_HOST' => '27.17.1.18',
             'DB_USER' => '',
             'DB_PWD' => '',
@@ -29,28 +29,28 @@ return array(
             '192.168.2.12' => '/home/www/print/System/www'
         ],
         'site_url' => '',
-        'bd_api' => 
+        'bd_api' =>
         [
             [
                 'bd_appid' => '14649041',
                 'bd_apikey' => 'xZGhaOeh1rkMj1iQqVREf5L0',
                 'bd_secretkey' => 'XSqGf4f8WaGYy5ItvQ93XpbazKvaWzzG',
-                'ip' => ['CLIENT-IP: 58.49.78.112','X-FORWARDED-FOR: 58.49.78.112'],
+                'ip' => ['CLIENT-IP: 58.49.78.112', 'X-FORWARDED-FOR: 58.49.78.112'],
             ],
             [
                 'bd_appid' => '14661299',
                 'bd_apikey' => 'gdo6GatzaiPGZRx2GIe92Rau',
                 'bd_secretkey' => 'CKDkLZUgEyWewgxGK37hGZSC2s80AMFV',
-                'ip' => ['CLIENT-IP: 58.49.78.142','X-FORWARDED-FOR: 58.49.78.142'],
+                'ip' => ['CLIENT-IP: 58.49.78.142', 'X-FORWARDED-FOR: 58.49.78.142'],
             ],
         ],
     ),
     'test' => array(
         //预上线
-        
+
     ),
     'pro' => array(
         //正式线
-        
+
     )
 );
